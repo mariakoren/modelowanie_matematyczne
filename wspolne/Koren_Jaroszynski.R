@@ -1,12 +1,14 @@
 # CZĘŚĆ 1, Koren
 
-#kmr_uk_d <- read.csv("kmr_uk_d.csv")
+#kmr_uk_d <- read.csv("C:/Users/maria/Desktop/modelowanie_matematyczne/kmr_uk_d.csv")
 # View(kmr_uk_d)
 library(fitdistrplus)
 library(e1071)
 library(ggplot2)
 library(gridExtra)
 library(goftest)
+library(dplyr)
+library(ggExtra)
 
 # zadanie 1
 zamkniecie <- kmr_uk_d$Zamkniecie
@@ -15,7 +17,7 @@ df <- data.frame(data = data, zamkniecie = zamkniecie)
 
 wykres <- ggplot(df, aes(x =as.Date(data), y = zamkniecie, group = 1)) + geom_line(color = "blue")+labs(x="data", y="cena podczas zamknięcia")
 plot(wykres)
-ggsave("cena_podczas_zamkniecia.jpg", plot = plot, width = 12, height = 9, units = "cm", dpi = 480)
+#ggsave("cena_podczas_zamkniecia.jpg", plot = plot, width = 12, height = 9, units = "cm", dpi = 480)
 histogram <- hist(zamkniecie, prob = TRUE, xlab = "Zamknięcie", ylab = "Gęstość")
 
 
@@ -264,8 +266,9 @@ p_value
 
 
 # CZĘŚĆ 2, wspólna
+# A analiza rozkładów brzegowych
 
-# 2.1 badanie danych spóli lmr_uk_d
+# 2.1 badanie danych spólki lmr_uk_d
 dane1 <- kmr_uk_d$Zamkniecie
 ilosc1 <- length(dane1)
 #stopy zwrotu
@@ -288,7 +291,7 @@ cdfcomp(list(norm1))
 
 #5 test równości dla rozkładu X ~ N(-0.0023,0.018 )
 N1 <- 10000
-n1 <- length(r)
+n1 <- length(r1)
 Dn1 <- c()
 
 for (i in 1:N1) { 
@@ -349,3 +352,18 @@ points(dn_n2,0,pch=19,col=2)
 
 p_value_n2 <- length(Dn1[Dn1>dn_n1])/N
 p_value_n2 #0.5709 => hipoteza że rozkład stopów jest X ~ N(-0.0023,0.018 ) przyjęta
+
+
+# B Estymacja parametrów rozkładu dwuwymiarowego normalnego oraz analiza dobrości dopasowania
+
+# 1 Wykres rozrzutu z histogramami brzegowymi
+
+stopy_kursow <- data.frame(r1=r1, r2=r2)
+#stopy_kursow
+p <-  ggplot(stopy_kursow, aes(x=r1, y=r2)) + geom_point()
+ggMarginal(p, type="histogram")
+
+# 2
+
+
+
