@@ -358,12 +358,66 @@ p_value_n2 #0.5709 => hipoteza że rozkład stopów jest X ~ N(-0.0023,0.018 ) p
 
 # 1 Wykres rozrzutu z histogramami brzegowymi
 
-stopy_kursow <- data.frame(r1=r1, r2=r2)
-#stopy_kursow
-p <-  ggplot(stopy_kursow, aes(x=r1, y=r2)) + geom_point()
+kursy <- data.frame(r1=r1, r2=r2)
+kursy
+p <-  ggplot(kursy, aes(x=r1, y=r2)) + geom_point()
 ggMarginal(p, type="histogram")
 
-# 2
+# 2 Korzystając z omówionych na wykładzie estymatorów, wyznacz wektor
+# średnich µˆ, kowariancjji, współczynnik korelacji, macierz kowariancji Σˆ
+# oraz macierz korelacji
+
+# wektor średnich
+mu <- colMeans(kursy)
+# mu
+#r1            r2 
+#-0.0002403422 -0.0024970847
+
+
+# kowarjacja
+Sigma <- cov(kursy) #estymator nieobciazony
+#Sigma
+#    r1           r2
+#r1 3.529462e-04 7.719315e-05
+#r2 7.719315e-05 3.181408e-03
+
+#macierz korelacji
+P <- cor(kursy)
+#P
+
+#    r1         r2
+#r1 1.00000000 0.07284753
+#r2 0.07284753 1.00000000
+
+# wspólczynnik korelacji 0.07284753 - wartość w macierzy korelacji na pozycjach (1,2) oraz (2,1)
+
+
+# 3 Zapisać wzór gęstości oraz wzóry gęstości rozkładów brzegowych
+
+s1 <- sqrt(Sigma[1, 1])
+s2 <- sqrt(Sigma[2, 2])
+
+# Tworzenie siatki punktów
+x <- seq(-3 * s1+mu[1], 3 * s1+mu[1], 0.005)
+y <- seq(-3 * s2+mu[2], 3 * s2+mu[2], 0.005)
+
+# Wykres gęstości dwuwymiarowego rozkładu normalnego
+f <- function(x, y) dmnorm(cbind(x, y), mu, Sigma)
+z <- outer(x, y, f)
+#persp(x, y, z, theta = 30, phi = 30, col = "lightblue")
+persp(x, y, z, theta = -30, phi = 25, 
+      shade = 0.75, col = "lightblue", expand = 0.5, r = 2, 
+      ltheta = 25, ticktype = "detailed")
+
+
+density_r1 <- dnorm(x, mean = mu[1], sd = s1)
+plot(x, density_r1, type = 'l', col = 'blue', lwd = 2, xlab = 'r1', ylab = 'Density', main = 'Wykres gęstości r1')
+
+# Wykres gęstości jednowymiarowej dla r2
+density_r2 <- dnorm(y, mean = mu[2], sd = s2)
+plot(y, density_r2, type = 'l', col = 'blue', lwd = 2, xlab = 'r2', ylab = 'Density', main = 'Wykres gęstości r2')
+
+# C Analiza dopasowania rozkładu N(ˆµ, Σ) ˆ do danych
 
 
 
