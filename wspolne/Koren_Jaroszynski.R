@@ -417,7 +417,48 @@ plot(x, density_r1, type = 'l', col = 'blue', lwd = 2, xlab = 'r1', ylab = 'Dens
 density_r2 <- dnorm(y, mean = mu[2], sd = s2)
 plot(y, density_r2, type = 'l', col = 'blue', lwd = 2, xlab = 'r2', ylab = 'Density', main = 'Wykres gęstości r2')
 
-# C Analiza dopasowania rozkładu N(ˆµ, Σ) ˆ do danych
 
+# C Analiza dopasowania rozkładu N(ˆµ, Σ) ˆ do danych
+# 1 
+
+library(MASS)
+n <- nrow(kursy); n
+
+set.seed(100)
+Z <- MASS::mvrnorm(n,mu=mu,Sigma=Sigma) # Z - wygenerowany rozkład
+
+#wykresy rozrzutu
+par(mfrow=c(2,2))
+plot(kursy, xlim = c(-0.15, 0.15), ylim = c(-0.20, 0.20), main = "Wykres rozrzutu dla log-zwrotów z danych", pch = 16, col = "blue")
+plot(Z, xlim = c(-0.15, 0.15), ylim = c(-0.20, 0.20), main = "Wykres rozrzutu dla wygenerowanrgo rozkładu", pch = 16, col = "red")
+
+
+
+#2
+
+# Obliczenie kwadratów odległości Mahalanobisa
+mahalanobis_distances <- mahalanobis(kursy, center = mu, cov = Sigma)
+#mahalanobis_distances
+#wyniki na histogramie
+par(mfrow=c(1,1))
+hist(mahalanobis_distances,prob=TRUE)
+
+
+
+n <- dim(kursy)[1]; n
+alpha <- ppoints(n)
+q_emp <- quantile(mahalanobis_distances,alpha)
+q_teo <- qchisq(alpha,2)
+
+plot(q_emp,q_teo,pch=19)
+abline(a=0,b=1,col=2)
+
+#testujemyhipoteze, ze kwadraty odleglosci Mahalanobisa maja rozklad chi(2)
+
+ks.test(mahalanobis_distances,'pchisq',2)
+#Asymptotic one-sample Kolmogorov-Smirnov test
+#data:  mahalanobis_distances
+#D = 0.13942, p-value = 0.0001707 < 0.05 => otrzycamy hipotezęze kwadraty odleglosci Mahalanobisa maja rozklad chi(2)
+# zatem odrzucamy również hipoteze o normalności rozkładu log-zwrotów 
 
 
