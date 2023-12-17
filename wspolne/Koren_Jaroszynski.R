@@ -161,7 +161,7 @@ df <- data.frame(data = Data, zamkniecie = Zamkniecie)
 plot <- ggplot(df, aes(x = as.Date(data), y = zamkniecie, group = 1)) +
   geom_line(color = "red") +
   labs(x = "data", y = "Cena podczas zamknięcia")
-
+plot
 ggsave(
   "cena_podczas_zamkniecia.jpg",
   plot = plot,
@@ -180,6 +180,7 @@ hist <- ggplot(
   color = "black",
   fill = "white"
 )
+hist
 ggsave(
   "histogram.jpg",
   plot = hist,
@@ -216,11 +217,13 @@ decay_gamma
 
 legendary <- c("norm", "lnorm", "gamma")
 jpeg("comp.jpg", width = 1920, height = 1080, quality = 100, res = 140)
-par(mfrow = c(2, 2))
-denscomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
-qqcomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
-cdfcomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
-ppcomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
+par(mfrow = c(1, 1))
+hw <- denscomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
+hw
+qq <- qqcomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
+qq
+cdf <- cdfcomp(list(decay_norm, decay_lnorm, decay_gamma), legendtext = legendary)
+cdf
 dev.off()
 
 gofstat(
@@ -276,11 +279,14 @@ r1<-diff(log(dane1))
 
 #1 wykres log-zwrotów
 plot(r1)
+lines(r1, type = "l", col = "brown")
 #2 histgram
-hist(r1)
+h1<-hist(r1)
+
 #3 dowasowac rozklad normalny
 norm1 <- fitdist(r1, 'norm')
-denscomp(list(norm1))
+n1<-denscomp(list(norm1))
+n1
 norm1
 # mean = -0.002326204
 # sd = 0.0184629646
@@ -319,6 +325,7 @@ r2<-diff(log(dane2))
 
 #1 wykres log-zwrotów
 plot(r2)
+lines(r2, type = "l", col = "brown")
 #2 histgram
 hist(r2)
 #3 dowasowac rozklad normalny
@@ -332,7 +339,7 @@ norm2
 qqcomp(list(norm2))
 cdfcomp(list(norm2))
 
-#5 test równości dla rozkładu X ~ N(-0.0023,0.018 )
+#5 test równości dla rozkładu X ~  N(-0.0025,0.057 )
 N2 <- 10000
 n2 <- length(r2)
 Dn2 <- c()
@@ -351,7 +358,7 @@ hist(Dn2,prob=T)
 points(dn_n2,0,pch=19,col=2)
 
 p_value_n2 <- length(Dn1[Dn1>dn_n1])/N
-p_value_n2 #0.5709 => hipoteza że rozkład stopów jest X ~ N(-0.0023,0.018 ) przyjęta
+p_value_n2 #0.5709 => hipoteza że rozkład stopów jest X ~  N(-0.0025,0.057 ) przyjęta
 
 
 # B Estymacja parametrów rozkładu dwuwymiarowego normalnego oraz analiza dobrości dopasowania
@@ -393,7 +400,7 @@ P <- cor(kursy)
 
 
 # 3 Zapisać wzór gęstości oraz wzóry gęstości rozkładów brzegowych
-
+library(mvtnorm)
 s1 <- sqrt(Sigma[1, 1])
 s2 <- sqrt(Sigma[2, 2])
 
